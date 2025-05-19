@@ -42,8 +42,11 @@ public class Hospital2Application implements CommandLineRunner {
                 .build();
         //patientRepository.save(patient3);
 
-        patientRepository.save(new Patient(null,"Mohamed",new Date(),false,34));
+        patientRepository.save(new Patient(null,"Mohamed",new Date(),false,134));
         patientRepository.save(new Patient(null,"Hanae",new Date(),false,4321));
-        patientRepository.save(new Patient(null,"Imane",new Date(),true,98));
+        patientRepository.save(new Patient(null,"Imane",new Date(),true,198));
+        patientRepository.findAll().forEach(p ->{
+            System.out.println(p.getNom());
+        });
     }
 }

@@ -1,5 +1,6 @@
 package net.ourahma.web;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import net.ourahma.entities.Patient;
 import net.ourahma.repository.PatientRepository;
@@ -7,7 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -50,5 +53,24 @@ public class PatientController {
     public String home(){
         return "redirect:/index";
     }
+    @GetMapping("/patients")
+    public List<Patient> listPatients(){
+        return patientRepository.findAll();
+    }
 
+    @GetMapping("/formPatients")
+    public String formPatient(Model model){
+        model.addAttribute("patient", new Patient());
+        return "formPatients";
+    }
+
+    @PostMapping("save")
+    public String save(Model model, @Valid Patient patient, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return "formPatients";
+        }else{
+            patientRepository.save(patient);
+            return "redirect:/formPatients";
+        }
+    }
 }
