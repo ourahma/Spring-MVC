@@ -23,7 +23,7 @@
             </form>
             <table class="table">
                 <thead>
-                <th>ID</th><th>Nom</th><th>Date</th><th>Malade</th><th>Score</th><th>Actions</th>
+                <th>ID</th><th>Nom</th><th>Date</th><th>Malade</th><th>Score</th><th colspan="2">Actions</th>
 
 
                 <tr th:each="p:${Listpatients}">
@@ -36,7 +36,12 @@
                         <a
                                 onclick="javascript:return confirm('Etes vous sure de vouloir supprimer ? ')"
                                 th:href="@{delete(id=${p.id}, keyword=${keyword}, page=${currentPage})}"
-                                class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                class="btn btn-danger"><i class="bi bi-trash"></i> Supprimer patient</a>
+                    </td>
+                    <td>
+                        <a
+                                th:href="@{editPatient(id=${p.id}, keyword=${keyword}, page=${currentPage})}"
+                                class="btn btn-success"><i class="bi bi-pen"></i> Editer patient</a>
                     </td>
                 </tr>
                 </thead>
