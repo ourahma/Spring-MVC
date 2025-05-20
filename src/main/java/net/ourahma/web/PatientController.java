@@ -4,8 +4,10 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import net.ourahma.entities.Patient;
 import net.ourahma.repository.PatientRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +20,8 @@ import java.util.List;
 @Controller
 @AllArgsConstructor
 public class PatientController {
+
+    @Autowired
     private PatientRepository patientRepository;
 
     @GetMapping("/user/index")
@@ -42,7 +46,8 @@ public class PatientController {
     }
     // supprimer les patients
     @GetMapping("/admin/delete")
-    private String delete(@RequestParam(name="id") Long id,
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String delete(@RequestParam(name="id") Long id,
                           @RequestParam(name = "keyword", defaultValue = "") String keyword,
                           @RequestParam(name = "page", defaultValue = "0") int page){
         patientRepository.deleteById(id);
@@ -59,12 +64,14 @@ public class PatientController {
     }
 
     @GetMapping("/formPatients")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String formPatient(Model model){
         model.addAttribute("patient", new Patient());
         return "formPatients";
     }
 
     @PostMapping("/admin/save")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String save(Model model, @Valid Patient patient, BindingResult bindingResult,
                        @RequestParam(name = "keyword", defaultValue = "") String keyword,
                        @RequestParam(name = "page", defaultValue = "0") int page){
@@ -78,6 +85,7 @@ public class PatientController {
         }
     }
     @GetMapping("/admin/editPatient")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String editPatient(Model model, Long id, String keyword, int page){
         Patient patient = patientRepository.findById(id).orElse(null);
         if(patient == null)throw new RuntimeException("Patient introuvable");
