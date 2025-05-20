@@ -7,8 +7,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 
 import java.util.Date;
 
@@ -21,7 +24,7 @@ public class Hospital2Application  {
     }
 
     //@Bean
-    CommandLineRunner commandLineRunner(PatientRepository patientRepository) {
+    CommandLineRunner start(PatientRepository patientRepository) {
         return args -> {
             // trois façons pour insérer des patients
             // 1 ere méthode
@@ -58,6 +61,24 @@ public class Hospital2Application  {
     @Bean
     PasswordEncoder passwordEncder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    CommandLineRunner commandLineRunner(JdbcUserDetailsManager jdbcUserDetailsManager){
+        PasswordEncoder passwordEncoder = passwordEncder();
+        return args ->{
+
+            if(!jdbcUserDetailsManager.userExists("user11")){
+                jdbcUserDetailsManager.createUser(User.withUsername("user11").password(passwordEncoder.encode("1234")).roles("USER").build());
+            }
+            if(!jdbcUserDetailsManager.userExists("user22")){
+                jdbcUserDetailsManager.createUser(User.withUsername("user22").password(passwordEncoder.encode("1234")).roles("USER").build());
+            }
+            if(!jdbcUserDetailsManager.userExists("admin2")){
+                jdbcUserDetailsManager.createUser(User.withUsername("admin2").password(passwordEncoder.encode("1234")).roles("USER","ADMIN").build());
+            }
+
+        };
     }
 
 }

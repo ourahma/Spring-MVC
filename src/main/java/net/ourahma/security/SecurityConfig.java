@@ -12,8 +12,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+import javax.sql.DataSource;
 
 
 @Configuration
@@ -23,7 +25,7 @@ public class SecurityConfig {
 
 
     // définir les utilisateurs qui ont droit d 'accéder à l'application
-    @Bean
+    //@Bean
     public InMemoryUserDetailsManager inMemoryUserDetailsManager(PasswordEncoder passwordEncoder){
         String encodedPassword = passwordEncoder.encode("1234");
         System.out.println(encodedPassword);
@@ -33,7 +35,12 @@ public class SecurityConfig {
                 User.withUsername("admin").password(encodedPassword).roles("USER","ADMIN").build()
         );
     }
-
+    //JDBC authentication
+    @Bean
+    public JdbcUserDetailsManager jdbcUserDetailsManager(DataSource dataSource){
+        // spécifier le data source, où on a les rôles et les tables
+        return new JdbcUserDetailsManager(dataSource);
+    }
     @Bean // Exécuter au démarrage
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
