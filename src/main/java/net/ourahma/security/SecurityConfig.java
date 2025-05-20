@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+import static org.springframework.security.authorization.AuthenticatedAuthorizationManager.rememberMe;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -34,11 +36,19 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
         return httpSecurity
-                .formLogin(Customizer.withDefaults())
-                .authorizeHttpRequests(ar->ar.requestMatchers("/deletePatient/").hasRole("ADMIN"))
-                .authorizeHttpRequests(ar->ar.requestMatchers("/admin/**").hasRole("ADMIN"))
-                .authorizeHttpRequests(ar->ar.requestMatchers("/user/**").hasRole("USER"))
-                .authorizeHttpRequests(ar->ar.anyRequest().authenticated())
+                .formLogin(form ->
+                    form.loginPage("/login")
+                            .defaultSuccessUrl("/user/index")
+                            .permitAll()
+                ).rememberMe(remember -> remember
+                        .key("my-unique-key")
+                        .tokenValiditySeconds(1209600)
+                )
+                .authorizeHttpRequests(ar ->ar.requestMatchers("/webjars/**").permitAll()
+                        .requestMatchers("/deletePatient/").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasRole("USER")
+                        .anyRequest().authenticated())
                 .exceptionHandling(exception ->{
                     exception.accessDeniedPage("/notAuthorized");
                 })
