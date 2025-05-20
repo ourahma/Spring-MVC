@@ -9,7 +9,7 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3 m-3">
-    <a class="navbar-brand" href="#">Navbar</a>
+    <a class="navbar-brand" th:href="@{/user/index}">Spring MVC</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -17,7 +17,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" th:href="@{index}">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" th:href="@{/user/index}">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Link</a>
@@ -29,8 +29,10 @@
                     Patients
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" th:href="@{/formPatients}">Nouveau Patient</a></li>
-                    <li><a class="dropdown-item" th:href="@{index}">Chercher</a></li>
+                    <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                        <a class="dropdown-item" th:href="@{/formPatients}">Nouveau Patient</a>
+                    </li>
+                    <li><a class="dropdown-item" th:href="@{/user/index}">Chercher</a></li>
                 </ul>
             </li>
 
@@ -38,11 +40,16 @@
         <ul class="navbar-nav ms-auto">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="UserDropdown" role="button"
-                   data-bs-toggle="dropdown" aria-expanded="false">
-                    Username
+                   data-bs-toggle="dropdown" aria-expanded="false"
+                   th:text="${#authentication.name}">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="UserDropdown">
-                    <li><a class="dropdown-item" th:href="@{/formPatients}">Logout</a></li>
+                    <li>
+                    <form method="post" th:action="@{/logout}">
+                        <!--fermet la session coté serveur et le cookie va etre supprimé-->
+                        <button type="submit" class="dropdown-item" >Logout</button>
+                    </form>
+                    </li>
                 </ul>
             </li>
         </ul>

@@ -20,7 +20,7 @@ import java.util.List;
 public class PatientController {
     private PatientRepository patientRepository;
 
-    @GetMapping("/index")
+    @GetMapping("/user/index")
     public String index(Model model,
                         @RequestParam(name = "page", defaultValue = "0") int page ,
                         @RequestParam(name = "size", defaultValue = "4") int size,
@@ -41,17 +41,17 @@ public class PatientController {
         return "Patients";
     }
     // supprimer les patients
-    @GetMapping("/delete")
+    @GetMapping("/admin/delete")
     private String delete(@RequestParam(name="id") Long id,
                           @RequestParam(name = "keyword", defaultValue = "") String keyword,
                           @RequestParam(name = "page", defaultValue = "0") int page){
         patientRepository.deleteById(id);
-        return "redirect:/index?page="+page+"&keyword="+keyword;
+        return "redirect:/user/index?page="+page+"&keyword="+keyword;
     }
     //
     @GetMapping("/")
     public String home(){
-        return "redirect:/index";
+        return "redirect:/user/index";
     }
     @GetMapping("/patients")
     public List<Patient> listPatients(){
@@ -64,7 +64,7 @@ public class PatientController {
         return "formPatients";
     }
 
-    @PostMapping("save")
+    @PostMapping("/admin/save")
     public String save(Model model, @Valid Patient patient, BindingResult bindingResult,
                        @RequestParam(name = "keyword", defaultValue = "") String keyword,
                        @RequestParam(name = "page", defaultValue = "0") int page){
@@ -74,10 +74,10 @@ public class PatientController {
             model.addAttribute("keyword", keyword);
             model.addAttribute("page", page);
             patientRepository.save(patient);
-            return "redirect:/index?page="+page+"&keyword="+keyword;
+            return "redirect:/user/index?page="+page+"&keyword="+keyword;
         }
     }
-    @GetMapping("/editPatient")
+    @GetMapping("/admin/editPatient")
     public String editPatient(Model model, Long id, String keyword, int page){
         Patient patient = patientRepository.findById(id).orElse(null);
         if(patient == null)throw new RuntimeException("Patient introuvable");
@@ -86,4 +86,7 @@ public class PatientController {
         model.addAttribute("page", page);
         return "editPatients";
     }
+
+
+
 }
