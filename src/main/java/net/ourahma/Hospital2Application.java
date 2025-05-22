@@ -2,6 +2,7 @@ package net.ourahma;
 
 import net.ourahma.entities.Patient;
 import net.ourahma.repository.PatientRepository;
+import net.ourahma.security.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -23,7 +24,7 @@ public class Hospital2Application  {
         SpringApplication.run(Hospital2Application.class, args);
     }
 
-    //@Bean
+    @Bean
     CommandLineRunner start(PatientRepository patientRepository) {
         return args -> {
             // trois façons pour insérer des patients
@@ -33,21 +34,21 @@ public class Hospital2Application  {
             patient.setNom("OURAHMA");
             patient.setDateNaissance(new Date());
             patient.setMalade(false);
-            patient.setScore(23);
-            //patientRepository.save(patient);
+            patient.setScore(230);
+            patientRepository.save(patient);
 
             // 2 eme méthode
             Patient patient2 = new Patient(null,"OURAHMA MAROUA",new Date(),false, 123);
-            //patientRepository.save(patient2);
+            patientRepository.save(patient2);
 
             // 3 eme méthode : en utilisant builder
             Patient patient3= Patient.builder()
                     .nom("Maroua")
                     .dateNaissance(new Date())
-                    .score(56)
+                    .score(560)
                     .malade(true)
                     .build();
-            //patientRepository.save(patient3);
+            patientRepository.save(patient3);
 
             patientRepository.save(new Patient(null,"Mohamed",new Date(),false,134));
             patientRepository.save(new Patient(null,"Hanae",new Date(),false,4321));
@@ -63,7 +64,7 @@ public class Hospital2Application  {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
+    //@Bean
     CommandLineRunner commandLineRunner(JdbcUserDetailsManager jdbcUserDetailsManager){
         PasswordEncoder passwordEncoder = passwordEncder();
         return args ->{
@@ -78,6 +79,23 @@ public class Hospital2Application  {
                 jdbcUserDetailsManager.createUser(User.withUsername("admin2").password(passwordEncoder.encode("1234")).roles("USER","ADMIN").build());
             }
 
+        };
+    }
+
+    //@Bean
+    CommandLineRunner commandLineRunnerUserDatails(AccountService accountService){
+        return args ->{
+            accountService.addNewRole("USER");
+            accountService.addNewRole("ADMIN");
+            accountService.addNewUser("user1","1234","user1@gmail.com","1234");
+            accountService.addNewUser("user2","1234","user2@gmail.com","1234");
+            accountService.addNewUser("admin","1234","admin@gmail.com","1234");
+
+
+            accountService.addRoleToUser("user1","USER");
+            accountService.addRoleToUser("user2","USER");
+            accountService.addRoleToUser("admin","USER");
+            accountService.addRoleToUser("user1","ADMIN");
         };
     }
 

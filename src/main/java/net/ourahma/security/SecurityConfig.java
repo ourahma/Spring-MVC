@@ -1,5 +1,6 @@
 package net.ourahma.security;
 
+import net.ourahma.security.service.UserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,8 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)// au niveau de controleur je dois proteget les endpoints moi meme
 public class SecurityConfig {
-
+    @Autowired
+    private UserDetailServiceImpl userDetailServiceImpl;
 
     // définir les utilisateurs qui ont droit d 'accéder à l'application
     //@Bean
@@ -36,7 +38,7 @@ public class SecurityConfig {
         );
     }
     //JDBC authentication
-    @Bean
+    //@Bean
     public JdbcUserDetailsManager jdbcUserDetailsManager(DataSource dataSource){
         // spécifier le data source, où on a les rôles et les tables
         return new JdbcUserDetailsManager(dataSource);
@@ -58,9 +60,10 @@ public class SecurityConfig {
                         //.requestMatchers("/admin/**").hasRole("ADMIN")
                         //.requestMatchers("/user/**").hasRole("USER")
                         .anyRequest().authenticated())
-                .exceptionHandling(exception ->{
-                    exception.accessDeniedPage("/notAuthorized");
-                })
-                .build();
+                        .userDetailsService(userDetailServiceImpl)
+                        .exceptionHandling(exception ->{
+                            exception.accessDeniedPage("/notAuthorized");
+                        })
+                        .build();
     }
 }
