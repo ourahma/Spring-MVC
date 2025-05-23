@@ -14,13 +14,15 @@
     <div class="card">
         <div class="card-header">Liste Patients</div>
         <div class="card-body">
-            <form method="get" th:action="@{/user/index}">
-                <label >Keyword : </label>
-                <input class="form-control-sm" type="text" name="keyword" th:value="${keyword}">
-                <button type="submit" class="btn btn-info">
-                    <i class="bi bi-search"></i>
-                </button>
-            </form>
+            <div class="d-flex justify-content-center m-2">
+                <form method="get" class="d-flex align-items-center gap-2" th:action="@{/user/index}">
+                    <label for="search" class="form-label mb-0">Keyword : </label>
+                    <input type="text" class="form-control" id="search"
+                           name="keyword" th:value="${keyword}" placeholder="Mot-clé" style="width: 200px;">
+                    <button type="submit" class="btn btn-success"><i class="bi bi-search"></i></button>
+                </form>
+            </div>
+
             <table class="table">
                 <thead>
                 <th>ID</th><th>Nom</th><th>Date</th><th>Malade</th><th>Score</th>
@@ -36,12 +38,12 @@
                         <a
                                 onclick="javascript:return confirm('Etes vous sure de vouloir supprimer ? ')"
                                 th:href="@{/admin/delete(id=${p.id}, keyword=${keyword}, page=${currentPage})}"
-                                class="btn btn-danger"><i class="bi bi-trash"></i> Supprimer patient</a>
+                                class="btn btn-danger"><i class="bi bi-trash"></i> Supprimer </a>
                     </td>
                     <td th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
                         <a
                                 th:href="@{/admin/editPatient(id=${p.id}, keyword=${keyword}, page=${currentPage})}"
-                                class="btn btn-success"><i class="bi bi-pen"></i> Editer patient</a>
+                                class="btn btn-success"><i class="bi bi-pen"></i> Editer </a>
                     </td>
                 </tr>
                 </thead>
